@@ -1,6 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import { router } from '../routes/usuarios.js';
+import { dbConnection } from '../database/config.js';
 
 const routes = router;
 
@@ -11,11 +12,19 @@ export class Server {
         this.port = process.env.PORT;
         this.usuariosPath = '/api/usuarios';
 
-        //Middlewares - Funciones que se ejecutan cuando levantamos nuestro servidor
+        //Conectamos con la base de datos
+        this.conectarDB();
+
+        //Middlewares - Funciones que se ejecutan cuando levantamos nuestro servidor. Antes de realizar las peticiones a la base de datos o llamar a un controlador
         this.middlewares();
 
         //Rutas de la app
         this.routes();
+    }
+
+    //CONECTAR A BASE DE DATOS
+    async conectarDB() {
+        await dbConnection();
     }
 
     middlewares() {
