@@ -5,16 +5,33 @@ import bcryptjs from 'bcryptjs';
 ///Aca la ponemos en mayusculas para poder crear instancias de este modelo
 const Usuario = modelo;
 
-export const usuariosGet = (req = request, res = response) => {
-    const { q, nombre = 'No name', apikey, page = 1, limit = 10 } = req.query;
+export const usuariosGet = async(req = request, res = response) => {
+    //const { q, nombre = 'No name', apikey, page = 1, limit = 10 } = req.query;
+    //Desestructuramos los argumentos que vienen en la query y se los podemos mandar al .find()
+    const { limite = 5, desde = 0} = req.query;//Por defecto ponemos 5
+    const estadoQuery = {estado: true};
 
+    /**
+     * EN VEZ DE CREAR DOS CONSTANTES CON EL AWAIT, LO QUE NOS PUEDE RETRASAR LA RESPUESTA AL USUARIO, CREAMOS UNA COMIBNACION DE LAS MISMAS USANDO EN Promise.all
+     * const usuarios = await Usuario.find(estadoQuery) //Para obtener los usuarios. al find() le podemos pasar instrucciones para obtener el limite o el desde por ejemplo
+        .skip(Number(desde))
+        .limit(Number(limite));
+        const total = await Usuario.countDocuments(estadoQuery);
+     */
+
+    //Hacemos unas desestructuración de Arrgelos para poder mandarle la informacion mas amigablemente
+    const [total, usuarios] = await Promise.all([
+        Usuario.countDocuments(estadoQuery),
+        Usuario.find(estadoQuery) //Para obtener los usuarios. al find() le podemos pasar instrucciones para obtener el limite o el desde por ejemplo
+            .skip(Number(desde))
+            .limit(Number(limite))
+    ]);
+    
+
+    //Esta es la respuesta que mandamos luego de hacer, en este caso, el GET
     res.json({
-        msg: 'get API - Controlador',
-        q,
-        nombre,
-        apikey,
-        page,
-        limit
+        total,
+        usuarios
     });
 }
 
@@ -61,14 +78,21 @@ export const usuariosPut = async(req = request, res = response) => {
     //Aca guardamos el usuario encontrado y aparte lo actualizamos. Lo devolvemos en el res.json
     const usuario = await Usuario.findByIdAndUpdate(id, resto);
 
-    res.json({
-        msg: 'put API - Controlador',
-        usuario
-    });
+    //Esta es la respuesta que mandamos luego de hacer, en este caso, el PUT
+    res.json(usuario);
 }
 
-export const usuariosDelete = (req = request, res = response) => {
+export const usuariosDelete = async(req = request, res = response) => {
+
+    const { id } = req.params;
+
+    //PARA BORRAR FISICAMENTE
+    //const usuario = await Usuario.findByIdAndDelete(id);
+
+    //Lo debemos borrar logicamente para no perder las referencias por si el usuario interactuo con el sistema
+    const usuario = await Usuario.findByIdAndUpdate(id, {estado: false});
+
     res.json({
-        msg: 'delete API - Controlador'
+        usuario
     });
 }

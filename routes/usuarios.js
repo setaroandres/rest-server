@@ -28,4 +28,8 @@ router.post('/', [
     validarCampos
 ], usuariosPost);//como segundo arg podemos mandar un middleware para que se ejecuten antes de hacer la peticion al servidor.
 
-router.delete('/', usuariosDelete);
+router.delete('/:id', [
+    check('id', 'No es un id válido').isMongoId(),
+    check('id').custom(existeUsuarioPorId), //Usamos esta fcn para validar los custom validators
+    validarCampos
+], usuariosDelete);
