@@ -3,7 +3,9 @@ import { Router } from "express";
 import { check } from "express-validator";
 import { usuariosDelete, usuariosGet, usuariosPost, usuariosPut } from "../controllers/usuarios.js";
 import { emailExiste, esRoleValido, existeUsuarioPorId } from "../helpers/db-validators.js";
-import { validarCampos } from "../middlewares/validar-campos.js";
+
+//Middlewares
+import { validaCampos, validaJWT, validaTieneRole } from "../middlewares/index.js";
 
 export const router = Router();
 
@@ -14,7 +16,7 @@ router.put('/:id', [
     check('id').custom(existeUsuarioPorId), //Usamos esta fcn para validar los custom validators
     check('role').custom(esRoleValido), //Usamos esta fcn para validar los custom validators
     //Una vez que chequeamos todos los campos con los checks (mandatory fields) le mandamos el middleware para no continuar a la ruta
-    validarCampos
+    validaCampos
 ], usuariosPut);
 
 router.post('/', [
@@ -25,11 +27,14 @@ router.post('/', [
     //check('role', 'No es un rol permitido').isIn(['ADMIN_ROLE', 'USER_ROLE']), //Usamos esta fcn para validar con express-validator
     check('role').custom(esRoleValido),//Usamos esta fcn para validar los custom validators
     //Una vez que chequeamos todos los campos con los checks (mandatory fields) le mandamos el middleware para no continuar a la ruta
-    validarCampos
+    validaCampos
 ], usuariosPost);//como segundo arg podemos mandar un middleware para que se ejecuten antes de hacer la peticion al servidor.
 
 router.delete('/:id', [
+    validaJWT,
+    //esAdminRole,
+    validaTieneRole('ADMIN_ROLE', 'VENTAS_ROLE'),
     check('id', 'No es un id válido').isMongoId(),
     check('id').custom(existeUsuarioPorId), //Usamos esta fcn para validar los custom validators
-    validarCampos
+    validaCampos
 ], usuariosDelete);

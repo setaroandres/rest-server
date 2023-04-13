@@ -86,6 +86,8 @@ export const usuariosDelete = async(req = request, res = response) => {
 
     const { id } = req.params;
 
+    const uid = req.uid;
+
     //PARA BORRAR FISICAMENTE
     //const usuario = await Usuario.findByIdAndDelete(id);
 

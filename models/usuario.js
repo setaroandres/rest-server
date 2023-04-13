@@ -35,7 +35,8 @@ const usuarioSchema = Schema({
 ///Podemos sobreescribir metodos para el Schema
 usuarioSchema.methods.toJSON = function() {
     //desectructuramos los que no queremos tener y desp usamos el spread para tener todos los demas
-    const { __v, password, ...usuario } = this.toObject();
+    const { __v, password, _id, ...usuario } = this.toObject();
+    usuario.uid = _id;
     return usuario;
 }
 
