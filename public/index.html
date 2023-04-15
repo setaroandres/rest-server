@@ -54,7 +54,6 @@
 
         const button = document.getElementById('google-sign-out');
         button.onclick = () => {
-            console.log('LA concha de tu madre')
             google.accounts.id.disableAutoSelect();
             google.accounts.id.revoke(localStorage.getItem('correo'), done => {
                 localStorage.clear();
