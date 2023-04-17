@@ -3,17 +3,24 @@ import cors from 'cors';
 import { router } from '../routes/usuarios.js';
 import { routerAuth } from '../routes/auth.js';
 import { dbConnection } from '../database/config.js';
+import { routerCategorias } from '../routes/categorias.js';
 
 const routes = router;
 const auths = routerAuth;
+const cats = routerCategorias;
 
 export class Server {
 
     constructor() {
         this.app = express();
         this.port = process.env.PORT;
-        this.usuariosPath = '/api/usuarios';
-        this.authPath = '/api/auth';
+
+        //Creamos un obj con las rutas
+        this.paths = {
+            auth: '/api/auth',
+            categorias: '/api/categorias',
+            usuarios: '/api/usuarios'
+        }
 
         //Conectamos con la base de datos
         this.conectarDB();
@@ -42,9 +49,12 @@ export class Server {
         this.app.use(express.static('public'));
     }
 
+    //Aca definimos todas las rutas para que puedan ser utilizadas
+    //Aca definimos que en el path (/categorias, /usuarios, etc), vamos a utilizar las rutas definidas en el router
     routes() {
-        this.app.use(this.authPath, auths);
-        this.app.use(this.usuariosPath, routes);
+        this.app.use(this.paths.auth, auths);
+        this.app.use(this.paths.usuarios, routes);//Aca hacemos el require del archivo de routes correspondiente
+        this.app.use(this.paths.categorias, cats);
     }
 
     listen() {

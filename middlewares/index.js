@@ -7,3 +7,4 @@ import { esAdminRole, tieneRole } from "../middlewares/validar-roles.js";
 export const validaCampos = validarCampos;
 export const validaJWT = validarJWT;
 export const validaTieneRole = tieneRole;
+export const esAdmin = esAdminRole;
