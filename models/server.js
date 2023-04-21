@@ -4,10 +4,14 @@ import { router } from '../routes/usuarios.js';
 import { routerAuth } from '../routes/auth.js';
 import { dbConnection } from '../database/config.js';
 import { routerCategorias } from '../routes/categorias.js';
+import { routerProductos } from '../routes/productos.js';
+import { routerBuscar } from '../routes/buscar.js';
 
 const routes = router;
 const auths = routerAuth;
 const cats = routerCategorias;
+const prods = routerProductos;
+const buscar = routerBuscar;
 
 export class Server {
 
@@ -18,7 +22,9 @@ export class Server {
         //Creamos un obj con las rutas
         this.paths = {
             auth: '/api/auth',
+            buscar: '/api/buscar',
             categorias: '/api/categorias',
+            productos: '/api/productos',
             usuarios: '/api/usuarios'
         }
 
@@ -55,6 +61,8 @@ export class Server {
         this.app.use(this.paths.auth, auths);
         this.app.use(this.paths.usuarios, routes);//Aca hacemos el require del archivo de routes correspondiente
         this.app.use(this.paths.categorias, cats);
+        this.app.use(this.paths.productos, prods);
+        this.app.use(this.paths.buscar, buscar);
     }
 
     listen() {

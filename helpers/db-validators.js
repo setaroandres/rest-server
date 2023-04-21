@@ -2,7 +2,7 @@
 import mongoose from "mongoose";
 /*import { modeloRoles } from "../models/role.js";
 import { modelo } from '../models/usuario.js';*/
-import { Categoria, Modelo, Roles } from "../models/index.js";
+import { Categoria, Modelo, Producto, Roles } from "../models/index.js";
 
 ///Aca la ponemos en mayusculas para poder crear instancias de este modelo
 const Usuario = Modelo;
@@ -34,10 +34,18 @@ export const existeUsuarioPorId = async(id) => {
     }
 }
 
-//Validador personalizado para saber si existe la categoria por id
+//Validador personalizado para saber si existe la categoria por id antes de mostrarlo o updtear
 export const existeCategoriaPorId = async(id) => {
     const existeCategoria = await Categoria.findById(id);
     if (!existeCategoria) {
+        throw new Error(`El id ${id} no existe en la BD`);
+    }
+}
+
+//Validador personalizado para saber si existe el producto por id antes de mostrarlo o updatear
+export const existeProductoPorId = async(id) => {
+    const existeProducto = await Producto.findById(id);
+    if (!existeProducto) {
         throw new Error(`El id ${id} no existe en la BD`);
     }
 }
