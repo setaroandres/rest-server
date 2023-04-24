@@ -6,12 +6,15 @@ import { dbConnection } from '../database/config.js';
 import { routerCategorias } from '../routes/categorias.js';
 import { routerProductos } from '../routes/productos.js';
 import { routerBuscar } from '../routes/buscar.js';
+import { routerUploads } from '../routes/uploads.js';
+import fileUpload from 'express-fileupload';
 
 const routes = router;
 const auths = routerAuth;
 const cats = routerCategorias;
 const prods = routerProductos;
 const buscar = routerBuscar;
+const uploads = routerUploads
 
 export class Server {
 
@@ -25,6 +28,7 @@ export class Server {
             buscar: '/api/buscar',
             categorias: '/api/categorias',
             productos: '/api/productos',
+            uploads: '/api/uploads',
             usuarios: '/api/usuarios'
         }
 
@@ -36,6 +40,7 @@ export class Server {
 
         //Rutas de la app
         this.routes();
+
     }
 
     //CONECTAR A BASE DE DATOS
@@ -53,6 +58,13 @@ export class Server {
 
         //Directorio publico. Aca manejamos el index de la app, no es necesario una ruta que especifique el index dentro de routes()
         this.app.use(express.static('public'));
+
+        //Fileupload - Carga de archivos
+        this.app.use(fileUpload({
+            useTempFiles : true,
+            tempFileDir : '/tmp/',
+            createParentPath: true
+        }));
     }
 
     //Aca definimos todas las rutas para que puedan ser utilizadas
@@ -63,6 +75,7 @@ export class Server {
         this.app.use(this.paths.categorias, cats);
         this.app.use(this.paths.productos, prods);
         this.app.use(this.paths.buscar, buscar);
+        this.app.use(this.paths.uploads, uploads);
     }
 
     listen() {

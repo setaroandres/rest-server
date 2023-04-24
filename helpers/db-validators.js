@@ -49,3 +49,13 @@ export const existeProductoPorId = async(id) => {
         throw new Error(`El id ${id} no existe en la BD`);
     }
 }
+
+//Validador personalizado para las colleciones permitidas
+export const coleccionesPermitidas = async(coleccion = '', coleccionesPermitidas = []) => {
+    const incluida = coleccionesPermitidas.includes(coleccion);
+    if (!incluida) {
+        throw new Error(`La coleccion ${coleccion} no está permitida - Las colecciones permitidas son: ${coleccionesPermitidas}`);
+    }
+
+    return true; //Este return lo debemos poner ya que en el route estamos llamando a esta fcn, en este caso sabemos que todo salio bien
+}
